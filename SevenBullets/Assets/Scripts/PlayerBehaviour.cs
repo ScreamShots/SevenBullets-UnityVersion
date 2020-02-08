@@ -16,11 +16,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     [SerializeField] Animator playerAnimator;
 
-    private void Start()
-    {
-        StartCoroutine(StartinAnimation());
-    }
-
     private void OnValidate()
     {
         currentPlayer = playerID.ToString();
@@ -81,13 +76,21 @@ public class PlayerBehaviour : MonoBehaviour
     {
         onRound = false;
     }
-
+    
+    public void LaunchStartinAnim()
+    {
+        StartCoroutine(StartinAnimation());
+    }
     IEnumerator StartinAnimation()
     {
         playerAnimator.SetTrigger("LaunchStartinAnim");
         yield return new WaitForSeconds(0.1f);
         yield return new WaitForSeconds(playerAnimator.GetCurrentAnimatorStateInfo(0).length - 0.1f); ;
         playerAnimator.SetTrigger("StopWalkAnim");
+        foreach(GameObject button in buttonCurrentPlayer)
+        {
+            button.GetComponent<Animator>().SetTrigger("ButtonDown");
+        }
     }
     
 

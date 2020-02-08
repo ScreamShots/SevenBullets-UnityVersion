@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
@@ -26,14 +27,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] int scorePlayer1;
     [SerializeField] int scorePlayer2;
 
+    [SerializeField] Animator bellAnimator;
+    [SerializeField] Text scorePlayer1TXT;
+    [SerializeField] Text scorePlayer2TXT;
 
 
-
-    private void Start()
+    private void Awake()
     {
-        player1Behaviour = player1.GetComponent<PlayerBehaviour>();
-        player2Behaviour = player2.GetComponent<PlayerBehaviour>();
-
         if (instance == null)
         {
             instance = this;
@@ -44,13 +44,23 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        player1Behaviour = player1.GetComponent<PlayerBehaviour>();
+        player2Behaviour = player2.GetComponent<PlayerBehaviour>();
+
+        StartCoroutine(InitializingGame());
+    }
+
     private void Update()
     {
         if (Input.GetKeyDown(KeyCode.A))
         {
             StartCoroutine(TimerBeforeRound());
         }
-      
+
+        scorePlayer1TXT.text = scorePlayer1.ToString();
+        scorePlayer2TXT.text = scorePlayer2.ToString();
     }
 
     void LaunchRound()
@@ -95,6 +105,17 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(timer);
 
         LaunchRound();
+    }
+
+    IEnumerator InitializingGame()
+    {
+        player1Behaviour.LaunchStartinAnim();
+        player2Behaviour.LaunchStartinAnim();
+        yield return new WaitForSeconds(6f);
+        bellAnimator.SetTrigger("DownTheBell");
+        yield return new WaitForSeconds(5f);
+        LaunchRound();
+
     }
 
     
