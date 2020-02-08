@@ -12,7 +12,14 @@ public class PlayerBehaviour : MonoBehaviour
 
     [HideInInspector] public bool onRound;
 
-    int targetedButtonId;
+    [HideInInspector] public int targetedButtonId;
+
+    [SerializeField] Animator playerAnimator;
+
+    private void Start()
+    {
+        StartCoroutine(StartinAnimation());
+    }
 
     private void OnValidate()
     {
@@ -53,8 +60,6 @@ public class PlayerBehaviour : MonoBehaviour
 
     void TestInputCorrect(int inputID)
     {
-        Debug.Log("Input" + inputID);
-
         if (buttonCurrentPlayer[targetedButtonId].GetComponent<ButtonBehaviour>().randomButtonId == inputID)
         {
             buttonCurrentPlayer[targetedButtonId].GetComponent<ButtonBehaviour>().ValidateButton();
@@ -63,8 +68,28 @@ public class PlayerBehaviour : MonoBehaviour
         else
         {
             buttonCurrentPlayer[targetedButtonId].GetComponent<ButtonBehaviour>().FailButton();
+            Failed();
+        }
+
+        if(targetedButtonId >= buttonCurrentPlayer.Length)
+        {
+            GameManager.instance.WinRound(currentPlayer);
         }
     }
+
+    void Failed()
+    {
+        onRound = false;
+    }
+
+    IEnumerator StartinAnimation()
+    {
+        playerAnimator.SetTrigger("LaunchStartinAnim");
+        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(playerAnimator.GetCurrentAnimatorStateInfo(0).length - 0.1f); ;
+        playerAnimator.SetTrigger("StopWalkAnim");
+    }
+    
 
    
 }
